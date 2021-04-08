@@ -1,5 +1,6 @@
 const express = require("express");
 const { graphqlHTTP } = require("express-graphql");
+const expressPlayground = require("graphql-playground-middleware-express").default;
 
 const schema = require("./schema");
 // const resolvers = require("./resolver");
@@ -30,6 +31,7 @@ app.use(
     context,
   })
 );
+app.get("/playground", expressPlayground({ endpoint: "/graphql" }));
 app.listen(4000);
 
 console.log("You are now live. wooHEJ!");
