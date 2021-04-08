@@ -2,12 +2,23 @@ const express = require("express");
 const { graphqlHTTP } = require("express-graphql");
 
 const schema = require("./schema");
-const resolvers = require("./resolver");
+// const resolvers = require("./resolver");
 const startDatabase = require("./database");
 
 const context = async () => {
   const db = await startDatabase();
   return { db };
+};
+
+const resolvers = {
+  events: async (_, context) => {
+    const { db } = await context();
+    return db.collection("events").find.toArray();
+  },
+  event: async ({ id }, context) => {
+    const { db } = await context();
+    return db.collection(events).findOne({ id });
+  },
 };
 
 const app = express();
@@ -16,7 +27,7 @@ app.use(
   graphqlHTTP({
     schema,
     rootValue: resolvers,
-    context
+    context,
   })
 );
 app.listen(4000);
