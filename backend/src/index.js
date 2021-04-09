@@ -14,7 +14,7 @@ const context = async () => {
 const resolvers = {
   events: async (_, context) => {
     const { db } = await context();
-    return db.collection("events").find.toArray();
+    return db.collection("events").find().toArray();
   },
   event: async ({ id }, context) => {
     const { db } = await context();
