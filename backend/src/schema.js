@@ -15,10 +15,13 @@ const schema = buildSchema(`
         age: Int
       }
     
-      type Query {
+    type Query {
         events: [Event!]!
         event(id: Int!): Event!
       }
+    type Mutation {
+      editEvent(id: Int!, title: String!, description: String!): Event!
+    }
 `);
 
 module.exports = schema;

@@ -1,6 +1,7 @@
 const express = require("express");
 const { graphqlHTTP } = require("express-graphql");
-const expressPlayground = require("graphql-playground-middleware-express").default;
+const expressPlayground = require("graphql-playground-middleware-express")
+  .default;
 
 const schema = require("./schema");
 // const resolvers = require("./resolver");
@@ -18,7 +19,19 @@ const resolvers = {
   },
   event: async ({ id }, context) => {
     const { db } = await context();
-    return db.collection('events').findOne({ id });
+    return db.collection("events").findOne({ id });
+  },
+  editEvent: async ({ id, title, description }, context) => {
+    const { db } = await context();
+
+    return db
+      .collection("events")
+      .findOneAndUpdate(
+        { id },
+        { $set: { title, description } },
+        { returnOriginal: false }
+      )
+      .then((res) => res.value);
   },
 };
 
