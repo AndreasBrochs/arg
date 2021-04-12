@@ -16,8 +16,12 @@ const context = async (req) => {
 
 const resolvers = {
   events: async (_, context) => {
-    const { db } = await context();
-    return db.collection("events").find().toArray();
+    const { db, token } = await context();
+    const { error } = await isTokenValid(token);
+    const events = db.collection("events").find();
+    return !error
+      ? events.toArray()
+      : events.project({ attendants: null }).toArray();
   },
   event: async ({ id }, context) => {
     const { db } = await context();
