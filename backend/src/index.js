@@ -24,8 +24,10 @@ const resolvers = {
       : events.project({ attendants: null }).toArray();
   },
   event: async ({ id }, context) => {
-    const { db } = await context();
-    return db.collection("events").findOne({ id });
+    const { db, token } = await context();
+    const { error } = await isTokenValid(token);
+    const event = await db.collection("events").findOne({ id });
+    return !error ? event : { ...event, attendants: null };
   },
   editEvent: async ({ id, title, description }, context) => {
     const { db, token } = await context();
