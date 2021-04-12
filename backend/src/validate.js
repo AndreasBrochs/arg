@@ -1,15 +1,15 @@
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
-const jwtsClient = require("jwks-rsa");
+const jwksClient = require("jwks-rsa");
 
-const client = jwtsClient({
+const client = jwksClient({
   jwksUri: `https://${process.env.AUTH0_DOMAIN}/.well-known/jwks.json`,
 });
 
 function getKey(header, callback) {
   client.getSigningKey(header.kid, function (error, key) {
-    const signKey = key.publicKey || key.rsaPublicKey;
-    callback(null, signKey);
+    const signingKey = key.publicKey || key.rsaPublicKey;
+    callback(null, signingKey);
   });
 }
 
@@ -23,10 +23,10 @@ async function isTokenValid(token) {
         getKey,
         {
           audience: process.env.API_IDENTIFIER,
-          issuer: `https://${process.env.AUTH0_DOMAIN}`,
+          issuer: `https://${process.env.AUTH0_DOMAIN}/`,
           algorithms: ["RS256"],
         },
-        (error, decode) => {
+        (error, decoded) => {
           if (error) {
             resolve({ error });
           }
@@ -36,9 +36,11 @@ async function isTokenValid(token) {
         }
       );
     });
+
     return result;
   }
-  return { error: "No token Provided" };
+
+  return { error: "No token provided" };
 }
 
 module.exports = isTokenValid;
